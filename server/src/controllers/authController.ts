@@ -70,8 +70,9 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: 'Registration failed',
-      error: error.message
+      message: error.message?.includes('buffering timed out')
+        ? 'MongoDB connection timeout: Please ensure IP 0.0.0.0/0 is whitelisted in MongoDB Atlas Network Access.'
+        : (error.message || 'Registration failed')
     });
   }
 };
@@ -117,7 +118,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       success: true,
-      message: `Welcome back, ${user.name}! Logged in as ${user.role.toUpperCase()}.`,
+      message: `Welcome back, ${user.name}!`,
       token,
       user: {
         id: user._id,
@@ -132,8 +133,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: 'Login failed',
-      error: error.message
+      message: error.message?.includes('buffering timed out')
+        ? 'MongoDB connection timeout: Please ensure IP 0.0.0.0/0 is whitelisted in MongoDB Atlas Network Access.'
+        : (error.message || 'Login failed')
     });
   }
 };
