@@ -8,6 +8,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { ReportPage } from './pages/ReportPage';
 import { MapPage } from './pages/MapPage';
 import { AboutPage } from './pages/AboutPage';
+import { AuthGatewayPage } from './pages/AuthGatewayPage';
 import { ToastContainer, ToastMessage, ToastType } from './components/Toast';
 
 export const AppContent: React.FC = () => {
@@ -47,6 +48,10 @@ export const AppContent: React.FC = () => {
             {/* Disaster Map View */}
             <Route path="/map" element={<MapPage onShowToast={addToast} />} />
             
+            {/* User Login & Registration Portal */}
+            <Route path="/login" element={<AuthGatewayPage onShowToast={addToast} />} />
+            <Route path="/register" element={<AuthGatewayPage onShowToast={addToast} />} />
+
             {/* About Sri Lanka Flood Context */}
             <Route path="/about" element={<AboutPage />} />
 

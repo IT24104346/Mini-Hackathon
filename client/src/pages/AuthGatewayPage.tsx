@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { DISTRICT_NAMES } from '../utils/districts';
 import {
@@ -22,6 +23,7 @@ interface AuthGatewayPageProps {
 }
 
 export const AuthGatewayPage: React.FC<AuthGatewayPageProps> = ({ onShowToast }) => {
+  const navigate = useNavigate();
   const { login, register } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
 
@@ -59,6 +61,7 @@ export const AuthGatewayPage: React.FC<AuthGatewayPageProps> = ({ onShowToast })
       setIsSubmitting(true);
       const user = await login(loginEmail, loginPassword);
       onShowToast('success', 'Access Granted', `Welcome to Flood-Safe-LK, ${user.name}!`);
+      navigate('/dashboard');
     } catch (err: any) {
       setErrorMessage(err.message || 'Login failed. Please verify your credentials.');
       onShowToast('error', 'Login Failed', err.message);
