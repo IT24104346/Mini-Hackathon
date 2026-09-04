@@ -26,39 +26,34 @@ export const StatCard: React.FC<StatCardProps> = ({
     switch (variant) {
       case 'danger':
         return {
-          glow: 'from-rose-500/20 to-red-500/5',
-          border: isActive ? 'border-rose-500 ring-2 ring-rose-500/30' : 'border-rose-500/30 hover:border-rose-500/60',
-          iconBg: 'bg-rose-500/10 text-rose-400 border border-rose-500/20',
-          valueColor: 'text-rose-400'
+          iconBg: 'bg-red-50 text-red-600 border border-red-200',
+          valueColor: 'text-red-600',
+          border: isActive ? 'border-red-500 ring-2 ring-red-100' : 'border-gray-200 hover:border-red-300'
         };
       case 'warning':
         return {
-          glow: 'from-amber-500/20 to-orange-500/5',
-          border: isActive ? 'border-amber-500 ring-2 ring-amber-500/30' : 'border-amber-500/30 hover:border-amber-500/60',
-          iconBg: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
-          valueColor: 'text-amber-400'
+          iconBg: 'bg-amber-50 text-amber-600 border border-amber-200',
+          valueColor: 'text-amber-600',
+          border: isActive ? 'border-amber-500 ring-2 ring-amber-100' : 'border-gray-200 hover:border-amber-300'
         };
       case 'info':
         return {
-          glow: 'from-cyan-500/20 to-blue-500/5',
-          border: isActive ? 'border-cyan-500 ring-2 ring-cyan-500/30' : 'border-cyan-500/30 hover:border-cyan-500/60',
-          iconBg: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20',
-          valueColor: 'text-cyan-400'
+          iconBg: 'bg-blue-50 text-blue-600 border border-blue-200',
+          valueColor: 'text-blue-600',
+          border: isActive ? 'border-blue-500 ring-2 ring-blue-100' : 'border-gray-200 hover:border-blue-300'
         };
       case 'success':
         return {
-          glow: 'from-emerald-500/20 to-teal-500/5',
-          border: isActive ? 'border-emerald-500 ring-2 ring-emerald-500/30' : 'border-emerald-500/30 hover:border-emerald-500/60',
-          iconBg: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
-          valueColor: 'text-emerald-400'
+          iconBg: 'bg-emerald-50 text-emerald-600 border border-emerald-200',
+          valueColor: 'text-emerald-600',
+          border: isActive ? 'border-emerald-500 ring-2 ring-emerald-100' : 'border-gray-200 hover:border-emerald-300'
         };
       case 'default':
       default:
         return {
-          glow: 'from-slate-700/20 to-slate-800/5',
-          border: isActive ? 'border-slate-500 ring-2 ring-slate-500/30' : 'border-slate-800 hover:border-slate-700',
-          iconBg: 'bg-slate-800 text-slate-300 border border-slate-700',
-          valueColor: 'text-white'
+          iconBg: 'bg-gray-100 text-slate-700 border border-gray-200',
+          valueColor: 'text-slate-900',
+          border: isActive ? 'border-slate-500 ring-2 ring-slate-100' : 'border-gray-200 hover:border-gray-300'
         };
     }
   };
@@ -68,32 +63,32 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${style.glow} bg-slate-900/80 backdrop-blur-md p-5 border ${style.border} transition-all duration-200 ${
-        onClick ? 'cursor-pointer hover:-translate-y-1 shadow-lg' : ''
+      className={`rounded-xl bg-white p-4 sm:p-5 border ${style.border} shadow-sm transition-all duration-150 ${
+        onClick ? 'cursor-pointer hover:shadow-md' : ''
       }`}
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
           {title}
         </span>
-        <div className={`p-2 rounded-xl ${style.iconBg}`}>
-          <Icon className="w-5 h-5" />
+        <div className={`p-1.5 rounded-lg ${style.iconBg}`}>
+          <Icon className="w-4 h-4" />
         </div>
       </div>
 
-      <div className="mt-4 flex items-baseline justify-between">
-        <div className={`text-3xl font-extrabold tracking-tight ${style.valueColor}`}>
+      <div className="mt-3 flex items-baseline justify-between">
+        <div className={`text-2xl sm:text-3xl font-bold tracking-tight ${style.valueColor}`}>
           {value}
         </div>
         {trend && (
-          <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300 border border-slate-700">
+          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-gray-100 text-slate-600 border border-gray-200">
             {trend}
           </span>
         )}
       </div>
 
       {subtitle && (
-        <p className="mt-1.5 text-xs text-slate-400 flex items-center gap-1 truncate">
+        <p className="mt-1 text-xs text-slate-500 truncate">
           {subtitle}
         </p>
       )}
