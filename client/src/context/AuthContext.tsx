@@ -64,8 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error(data.message || 'Registration failed.');
     }
 
-    setUser(data.user);
-    setToken(data.token);
+    // Do not automatically set user/token so user is redirected to sign in on login page
     return data.user;
   };
 

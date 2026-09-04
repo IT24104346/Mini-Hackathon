@@ -47,36 +47,36 @@ export const getSeverityBadgeClasses = (severity: SeverityType): {
   switch (severity) {
     case 'Critical':
       return {
-        badge: 'bg-rose-500/15 text-rose-400 border border-rose-500/30',
-        dot: 'bg-rose-500 animate-ping-slow',
-        border: 'border-rose-500/40',
-        bg: 'bg-rose-950/20',
-        text: 'text-rose-400'
+        badge: 'bg-red-50 text-red-700 border border-red-200',
+        dot: 'bg-red-600 animate-ping-slow',
+        border: 'border-red-200',
+        bg: 'bg-red-50',
+        text: 'text-red-700'
       };
     case 'High':
       return {
-        badge: 'bg-amber-500/15 text-amber-400 border border-amber-500/30',
-        dot: 'bg-amber-500',
-        border: 'border-amber-500/40',
-        bg: 'bg-amber-950/20',
-        text: 'text-amber-400'
+        badge: 'bg-amber-50 text-amber-700 border border-amber-200',
+        dot: 'bg-amber-600',
+        border: 'border-amber-200',
+        bg: 'bg-amber-50',
+        text: 'text-amber-700'
       };
     case 'Moderate':
       return {
-        badge: 'bg-yellow-500/15 text-yellow-300 border border-yellow-500/30',
-        dot: 'bg-yellow-400',
-        border: 'border-yellow-500/40',
-        bg: 'bg-yellow-950/20',
-        text: 'text-yellow-300'
+        badge: 'bg-yellow-50 text-yellow-800 border border-yellow-200',
+        dot: 'bg-yellow-500',
+        border: 'border-yellow-200',
+        bg: 'bg-yellow-50',
+        text: 'text-yellow-800'
       };
     case 'Low':
     default:
       return {
-        badge: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
-        dot: 'bg-emerald-500',
-        border: 'border-emerald-500/40',
-        bg: 'bg-emerald-950/20',
-        text: 'text-emerald-400'
+        badge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+        dot: 'bg-emerald-600',
+        border: 'border-emerald-200',
+        bg: 'bg-emerald-50',
+        text: 'text-emerald-700'
       };
   }
 };
@@ -84,12 +84,12 @@ export const getSeverityBadgeClasses = (severity: SeverityType): {
 export const getStatusBadgeClasses = (status: StatusType): string => {
   switch (status) {
     case 'Active':
-      return 'bg-red-500/20 text-red-300 border border-red-500/30';
+      return 'bg-red-50 text-red-700 border border-red-200';
     case 'Monitoring':
-      return 'bg-sky-500/20 text-sky-300 border border-sky-500/30';
+      return 'bg-blue-50 text-blue-700 border border-blue-200';
     case 'Resolved':
-      return 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+      return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
     default:
-      return 'bg-slate-500/20 text-slate-300 border border-slate-500/30';
+      return 'bg-gray-100 text-slate-700 border border-gray-200';
   }
 };

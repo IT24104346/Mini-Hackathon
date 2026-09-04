@@ -2,45 +2,6 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 import { hashPassword, verifyPassword, generateToken } from '../utils/authUtils';
 
-// Seed default Admin & Citizen accounts into MongoDB Atlas
-export const seedDefaultUsers = async (): Promise<void> => {
-  try {
-    const adminExists = await User.findOne({ email: 'admin@floodsafe.lk' });
-    if (!adminExists) {
-      const { salt, hash } = hashPassword('Admin@123');
-      await User.create({
-        name: 'Disaster Management Officer (DMC)',
-        email: 'admin@floodsafe.lk',
-        passwordHash: hash,
-        passwordSalt: salt,
-        role: 'admin',
-        district: 'Colombo',
-        phone: '+94 11 213 6136',
-        organization: 'Sri Lanka Disaster Management Centre'
-      });
-      console.log('[Auth Seeder]: Seeded default Admin account (admin@floodsafe.lk)');
-    }
-
-    const citizenExists = await User.findOne({ email: 'citizen@floodsafe.lk' });
-    if (!citizenExists) {
-      const { salt, hash } = hashPassword('Citizen@123');
-      await User.create({
-        name: 'Kasun Perera (Community Volunteer)',
-        email: 'citizen@floodsafe.lk',
-        passwordHash: hash,
-        passwordSalt: salt,
-        role: 'user',
-        district: 'Gampaha',
-        phone: '+94 77 123 4567',
-        organization: 'Kelani Valley Youth Volunteer Brigade'
-      });
-      console.log('[Auth Seeder]: Seeded default Citizen account (citizen@floodsafe.lk)');
-    }
-  } catch (err: any) {
-    console.warn('[Auth Seeder Notice]:', err.message);
-  }
-};
-
 // @desc    Register a new community citizen
 // @route   POST /api/auth/register
 export const registerUser = async (req: Request, res: Response): Promise<void> => {

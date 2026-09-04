@@ -2,48 +2,42 @@ import React from 'react';
 import {
   Waves,
   Shield,
-  Users,
-  Code,
-  GitBranch,
-  Database,
-  Cpu,
-  Layers,
-  CheckCircle,
-  ExternalLink,
-  MapPin,
-  Server,
-  Cloud
+  PhoneCall,
+  AlertTriangle,
+  LifeBuoy,
+  HeartHandshake,
+  Navigation
 } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   return (
-    <div className="max-w-5xl mx-auto py-6 space-y-12">
+    <div className="max-w-5xl mx-auto py-6 space-y-8">
       {/* Title & Banner */}
-      <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold mb-3">
-          <Shield className="w-3.5 h-3.5" />
-          <span>SE3090 Software Engineering Frameworks</span>
+      <div className="text-center max-w-3xl mx-auto space-y-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold">
+          <Shield className="w-3.5 h-3.5 text-blue-600" />
+          <span>Sri Lanka Disaster Management & Community Safety</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
           About Flood-Safe-LK & The Sri Lankan Flood Challenge
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
-          A dedicated community-driven early warning and disaster response system designed specifically for Sri Lanka's vulnerable river basins and urban catchments.
+        <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
+          A dedicated community-driven early warning and disaster response platform designed specifically for Sri Lanka's vulnerable river basins, catchments, and coastal districts.
         </p>
       </div>
 
       {/* Sri Lankan Context & Geography */}
-      <section className="glass-panel rounded-3xl p-6 sm:p-10 border border-slate-800 space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-cyan-600/20 border border-cyan-500/30 text-cyan-400">
+      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 space-y-5 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-600">
             <Waves className="w-5 h-5" />
           </div>
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="text-lg font-bold text-slate-900">
             The Sri Lankan Flooding Problem
           </h2>
         </div>
 
-        <div className="space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
+        <div className="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
           <p>
             Flooding is the most frequent and economically devastating natural disaster in Sri Lanka. The island's geography features a central highland massif flanked by rolling plains and coastal lowlands, giving rise to 103 distinct river basins.
           </p>
@@ -54,164 +48,118 @@ export const AboutPage: React.FC = () => {
 
         {/* River Basins Breakdown */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1.5">
-            <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider">Kelani River Basin</span>
-            <h4 className="text-sm font-bold text-white">Colombo & Gampaha</h4>
-            <p className="text-xs text-slate-400">
-              Affects high-density areas: Wellampitiya, Kolonnawa, Sedawatta, Biyagama, and Kelaniya.
+          <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-1">
+            <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">Kelani River Basin</span>
+            <h4 className="text-sm font-bold text-slate-900">Colombo & Gampaha</h4>
+            <p className="text-xs text-slate-600">
+              Affects high-density areas: Godagama, Wellampitiya, Kolonnawa, Sedawatta, Biyagama, and Kelaniya.
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1.5">
-            <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">Kalu River Basin</span>
-            <h4 className="text-sm font-bold text-white">Ratnapura & Kalutara</h4>
-            <p className="text-xs text-slate-400">
+          <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-1">
+            <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Kalu River Basin</span>
+            <h4 className="text-sm font-bold text-slate-900">Ratnapura & Kalutara</h4>
+            <p className="text-xs text-slate-600">
               Steep catchment prone to rapid 15-20m crests inundating Ratnapura town, Millakanda, and Putupaula.
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1.5">
-            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Gin & Nilwala Basins</span>
-            <h4 className="text-sm font-bold text-white">Galle & Matara</h4>
-            <p className="text-xs text-slate-400">
+          <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-1">
+            <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Gin & Nilwala Basins</span>
+            <h4 className="text-sm font-bold text-slate-900">Galle & Matara</h4>
+            <p className="text-xs text-slate-600">
               Submerges agricultural lands and transport arteries across Baddegama, Thihagoda, and Akuressa.
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1.5">
-            <span className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">Mahaweli & Dry Zone</span>
-            <h4 className="text-sm font-bold text-white">Kandy & Polonnaruwa</h4>
-            <p className="text-xs text-slate-400">
+          <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-1">
+            <span className="text-[11px] font-bold text-purple-600 uppercase tracking-wider">Mahaweli & Dry Zone</span>
+            <h4 className="text-sm font-bold text-slate-900">Kandy & Polonnaruwa</h4>
+            <p className="text-xs text-slate-600">
               Upstream reservoir spill gate discharges and sudden localized heavy flash floods.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 4 Team Members & Functional Module Ownership */}
-      <section className="glass-panel rounded-3xl p-6 sm:p-10 border border-slate-800 space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-400">
-            <Users className="w-5 h-5" />
+      {/* Flood Preparedness & Community Safety Directives */}
+      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 space-y-5 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-600">
+            <AlertTriangle className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">
-              Team Member Responsibility & Contribution Matrix
+            <h2 className="text-lg font-bold text-slate-900">
+              Emergency Directives & Community Safety Actions
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Clear functional ownership across four registered members and individual Git feature branches.
-            </p>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/80">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-slate-800 bg-slate-900/80 text-slate-300 font-bold uppercase tracking-wider">
-                <th className="py-3 px-4">Member ID</th>
-                <th className="py-3 px-4">Git Branch</th>
-                <th className="py-3 px-4">Module Ownership</th>
-                <th className="py-3 px-4">Key Code Deliverables</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-300">
-              <tr className="hover:bg-slate-900/40">
-                <td className="py-3 px-4 font-bold text-cyan-400 whitespace-nowrap">IT24104346</td>
-                <td className="py-3 px-4 font-mono text-[11px] text-slate-400 whitespace-nowrap">feature/flood-reporting</td>
-                <td className="py-3 px-4 font-semibold text-white">Flood Reporting Module</td>
-                <td className="py-3 px-4">
-                  <code>ReportPage.tsx</code>, GPS coordinate autofill, client-side validation, <code>aiAssistant.ts</code>, <code>POST /api/floods</code> controller and validation middleware.
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-900/40">
-                <td className="py-3 px-4 font-bold text-cyan-400 whitespace-nowrap">IT24100435</td>
-                <td className="py-3 px-4 font-mono text-[11px] text-slate-400 whitespace-nowrap">feature/live-dashboard</td>
-                <td className="py-3 px-4 font-semibold text-white">Live Dashboard & Analytics Module</td>
-                <td className="py-3 px-4">
-                  <code>DashboardPage.tsx</code>, <code>StatCard.tsx</code>, live multi-field search, multi-criteria filtering (district, severity, status), sorting, <code>GET /api/floods/stats</code>.
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-900/40">
-                <td className="py-3 px-4 font-bold text-cyan-400 whitespace-nowrap">IT24102180</td>
-                <td className="py-3 px-4 font-mono text-[11px] text-slate-400 whitespace-nowrap">feature/flood-management</td>
-                <td className="py-3 px-4 font-semibold text-white">Flood Management & CRUD Module</td>
-                <td className="py-3 px-4">
-                  <code>FloodDetailModal.tsx</code>, <code>EditFloodModal.tsx</code>, <code>DeleteConfirmModal.tsx</code>, <code>PUT /api/floods/:id</code> & <code>DELETE /api/floods/:id</code> endpoints.
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-900/40">
-                <td className="py-3 px-4 font-bold text-cyan-400 whitespace-nowrap">IT24610820</td>
-                <td className="py-3 px-4 font-mono text-[11px] text-slate-400 whitespace-nowrap">feature/ui-map-deployment</td>
-                <td className="py-3 px-4 font-semibold text-white">UI/UX, Map & Deployment Module</td>
-                <td className="py-3 px-4">
-                  <code>HomePage.tsx</code>, <code>SriLankaMap.tsx</code> (Leaflet), <code>Navbar.tsx</code>, <code>Footer.tsx</code>, <code>AboutPage.tsx</code>, seed data engine, responsive theming, build & deployment.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* System Architecture & Tech Stack */}
-      <section className="glass-panel rounded-3xl p-6 sm:p-10 border border-slate-800 space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-teal-600/20 border border-teal-500/30 text-teal-400">
-            <Layers className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-white">
-              System Architecture & Tech Stack
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Production-ready full-stack decoupled architecture.
+            <p className="text-xs text-slate-500 mt-0.5">
+              Standard operating guidelines recommended by Sri Lanka Disaster Management Centre (DMC).
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-cyan-400 font-bold">
-              <Code className="w-4 h-4" />
-              <span>Frontend Layer</span>
+          <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-2">
+            <div className="flex items-center gap-2 text-blue-700 font-bold">
+              <LifeBuoy className="w-4 h-4 text-blue-600" />
+              <span>1. Early Warning & Evacuation</span>
             </div>
-            <ul className="space-y-1 text-slate-300">
-              <li>• React 18 + TypeScript</li>
-              <li>• Vite Build Tooling</li>
-              <li>• Tailwind CSS Design System</li>
-              <li>• React Router DOM (v7)</li>
-              <li>• Leaflet & React-Leaflet Maps</li>
-              <li>• Lucide React Icons</li>
-            </ul>
+            <p className="text-slate-600 leading-relaxed">
+              When water levels exceed amber risk status or spill gates open, immediately move elderly family members, children, and essential medications to designated high ground or local Grama Niladhari safe shelters.
+            </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-indigo-400 font-bold">
-              <Server className="w-4 h-4" />
-              <span>Backend Layer</span>
+          <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-2">
+            <div className="flex items-center gap-2 text-amber-700 font-bold">
+              <Navigation className="w-4 h-4 text-amber-600" />
+              <span>2. Transport & Road Safety</span>
             </div>
-            <ul className="space-y-1 text-slate-300">
-              <li>• Node.js + Express.js</li>
-              <li>• TypeScript Compilation</li>
-              <li>• RESTful API Architecture</li>
-              <li>• CORS & Environment Config</li>
-              <li>• Custom Error Handling Middleware</li>
-              <li>• Strict Input Validation</li>
-            </ul>
+            <p className="text-slate-600 leading-relaxed">
+              Never attempt to drive or walk through fast-flowing flood water or submerged bridges. 15cm of flowing water can knock down an adult, and 30cm can float most vehicles.
+            </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-emerald-400 font-bold">
-              <Database className="w-4 h-4" />
-              <span>Database & Cloud</span>
+          <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-2">
+            <div className="flex items-center gap-2 text-emerald-700 font-bold">
+              <HeartHandshake className="w-4 h-4 text-emerald-600" />
+              <span>3. Community Reporting</span>
             </div>
-            <ul className="space-y-1 text-slate-300">
-              <li>• MongoDB Atlas (Online Cloud DB)</li>
-              <li>• Mongoose ODM Schema</li>
-              <li>• Automatic Geospatial Indexing</li>
-              <li>• Auto-seeding Sample Dataset</li>
-              <li>• Deployed on Render & Vercel</li>
-            </ul>
+            <p className="text-slate-600 leading-relaxed">
+              Submit verified real-time field reports with precise water level and affected population counts using Flood-Safe-LK to direct Navy and volunteer boat rescue units efficiently.
+            </p>
           </div>
+        </div>
+      </section>
+
+      {/* Emergency Hotlines Box */}
+      <section className="rounded-2xl p-6 sm:p-8 bg-red-50 border border-red-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <div className="p-3 rounded-xl bg-red-100 border border-red-200 text-red-600 flex-shrink-0">
+            <PhoneCall className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-red-900">
+              Official Sri Lanka Emergency Hotlines
+            </h3>
+            <p className="text-xs text-red-700 mt-1 max-w-xl leading-relaxed">
+              In life-threatening situations, boat rescue requests, or medical emergencies, contact national emergency dispatch services immediately.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <a
+            href="tel:117"
+            className="flex-1 sm:flex-initial text-center px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition"
+          >
+            DMC Emergency: 117
+          </a>
+          <a
+            href="tel:1990"
+            className="flex-1 sm:flex-initial text-center px-4 py-2 rounded-xl bg-white hover:bg-gray-100 text-slate-800 font-semibold text-xs border border-gray-300 transition shadow-sm"
+          >
+            Suwa Seriya: 1990
+          </a>
         </div>
       </section>
     </div>

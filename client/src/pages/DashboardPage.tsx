@@ -6,13 +6,10 @@ import {
   RefreshCw,
   LayoutGrid,
   List,
-  SlidersHorizontal,
   Waves,
   AlertTriangle,
   Users,
   CheckCircle2,
-  Database,
-  ArrowUpDown,
   Radio,
   X
 } from 'lucide-react';
@@ -21,8 +18,7 @@ import {
   fetchFloodReports,
   fetchFloodStats,
   deleteFloodReport,
-  updateFloodReport,
-  seedSampleData
+  updateFloodReport
 } from '../services/api';
 import { DISTRICT_NAMES } from '../utils/districts';
 import { StatCard } from '../components/StatCard';
@@ -125,20 +121,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
     }
   };
 
-  const handleResetSeed = async () => {
-    if (!window.confirm('Reset all flood reports back to initial Sri Lankan sample data?')) return;
-    try {
-      setIsLoading(true);
-      await seedSampleData();
-      onShowToast('success', 'Database Reset', 'Sample Sri Lankan flood reports restored.');
-      resetFilters();
-    } catch (err: any) {
-      onShowToast('error', 'Seed Error', err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const resetFilters = () => {
     setFilters({
       search: '',
@@ -160,57 +142,57 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
   ].filter(Boolean).length;
 
   return (
-    <div className="space-y-8 py-4">
+    <div className="space-y-6 py-2">
       {/* Dashboard Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
               Live Flood Management Dashboard
             </h1>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
               {reports.length} Reports
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-0.5">
             Real-time monitoring, filtration, and situation management across all Sri Lankan districts.
           </p>
         </div>
 
         {/* Live Controls Bar */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Auto polling switch */}
           <button
             onClick={() => setAutoPolling(!autoPolling)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition ${
               autoPolling
-                ? 'bg-cyan-950/50 border-cyan-500/40 text-cyan-300'
-                : 'bg-slate-900 border-slate-800 text-slate-400'
+                ? 'bg-blue-50 border-blue-200 text-blue-700'
+                : 'bg-white border-gray-200 text-slate-600'
             }`}
           >
-            <Radio className={`w-3.5 h-3.5 ${autoPolling ? 'animate-pulse text-cyan-400' : ''}`} />
-            <span>Live Sync {autoPolling ? 'ON (20s)' : 'PAUSED'}</span>
+            <Radio className={`w-3.5 h-3.5 ${autoPolling ? 'text-blue-600' : ''}`} />
+            <span>Live Sync {autoPolling ? 'ON' : 'OFF'}</span>
           </button>
 
           {/* Manual Refresh */}
           <button
             onClick={() => loadDashboardData(false)}
             disabled={isRefreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-50 text-slate-700 text-xs font-medium border border-gray-200 transition disabled:opacity-50"
             title="Refresh Live Data"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
             <span>Refresh</span>
           </button>
 
           {/* View Toggle */}
-          <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
+          <div className="flex items-center bg-gray-100 border border-gray-200 rounded-lg p-0.5">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg text-xs font-medium transition ${
+              className={`p-1.5 rounded text-xs transition ${
                 viewMode === 'grid'
-                  ? 'bg-cyan-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
               title="Grid View"
             >
@@ -218,31 +200,21 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`p-1.5 rounded-lg text-xs font-medium transition ${
+              className={`p-1.5 rounded text-xs transition ${
                 viewMode === 'table'
-                  ? 'bg-cyan-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
               title="Table View"
             >
               <List className="w-4 h-4" />
             </button>
           </div>
-
-          {/* Reset Seed Button */}
-          <button
-            onClick={handleResetSeed}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-cyan-300 text-xs font-medium border border-slate-800 transition"
-            title="Reset to initial Sri Lanka seed dataset"
-          >
-            <Database className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Reset Seed</span>
-          </button>
         </div>
       </div>
 
       {/* Statistics Metric Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <StatCard
           title="Total Reports"
           value={stats?.totalReports ?? 0}
@@ -262,7 +234,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
           onClick={() => setFilters({ ...filters, status: filters.status === 'Active' ? 'All' : 'Active' })}
         />
         <StatCard
-          title="Critical Situations"
+          title="Critical Risk"
           value={stats?.criticalFloods ?? 0}
           icon={AlertTriangle}
           subtitle="Immediate rescue danger"
@@ -271,7 +243,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
           onClick={() => setFilters({ ...filters, severity: filters.severity === 'Critical' ? 'All' : 'Critical' })}
         />
         <StatCard
-          title="Affected People"
+          title="Affected Citizens"
           value={stats?.totalAffectedPeople ? stats.totalAffectedPeople.toLocaleString() : '0'}
           icon={Users}
           subtitle="Across Sri Lanka"
@@ -289,23 +261,23 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="glass-panel rounded-3xl p-5 border border-slate-800 space-y-4">
+      <div className="rounded-xl bg-white p-4 sm:p-5 border border-gray-200 shadow-sm space-y-3">
         {/* Row 1: Search & Sorting */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
           {/* Search bar */}
           <div className="md:col-span-7 relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              placeholder="Search by location (e.g. Wellampitiya, Ratnapura), keyword, or reporter..."
-              className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              placeholder="Search by location (e.g. Godagama, Ratnapura), keyword, or reporter..."
+              className="w-full pl-9 pr-8 py-2 rounded-lg bg-white border border-gray-300 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
             {filters.search && (
               <button
                 onClick={() => setFilters({ ...filters, search: '' })}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -317,7 +289,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
             <select
               value={filters.district}
               onChange={(e) => setFilters({ ...filters, district: e.target.value })}
-              className="w-full py-2.5 px-3.5 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full py-2 px-3 rounded-lg bg-white border border-gray-300 text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             >
               <option value="All">All Sri Lankan Districts (25)</option>
               {DISTRICT_NAMES.map((d) => (
@@ -333,7 +305,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
             <select
               value={filters.sortBy}
               onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
-              className="w-full py-2.5 px-3.5 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full py-2 px-3 rounded-lg bg-white border border-gray-300 text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -345,21 +317,21 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
         </div>
 
         {/* Row 2: Filter Pills */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800/80 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100 text-xs">
           {/* Severity Filters */}
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-slate-400 font-semibold mr-1 flex items-center gap-1">
-              <Filter className="w-3 h-3 text-cyan-400" />
+            <span className="text-slate-500 font-medium mr-1 flex items-center gap-1">
+              <Filter className="w-3 h-3 text-blue-600" />
               <span>Severity:</span>
             </span>
             {['All', 'Critical', 'High', 'Moderate', 'Low'].map((sev) => (
               <button
                 key={sev}
                 onClick={() => setFilters({ ...filters, severity: sev })}
-                className={`px-3 py-1 rounded-xl font-semibold transition ${
+                className={`px-2.5 py-1 rounded-md font-medium transition ${
                   filters.severity === sev
-                    ? 'bg-cyan-500 text-white shadow-sm'
-                    : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-slate-600 hover:bg-gray-200'
                 }`}
               >
                 {sev}
@@ -369,15 +341,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
 
           {/* Status Filters */}
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-slate-400 font-semibold mr-1">Status:</span>
+            <span className="text-slate-500 font-medium mr-1">Status:</span>
             {['All', 'Active', 'Monitoring', 'Resolved'].map((st) => (
               <button
                 key={st}
                 onClick={() => setFilters({ ...filters, status: st })}
-                className={`px-3 py-1 rounded-xl font-medium transition ${
+                className={`px-2.5 py-1 rounded-md font-medium transition ${
                   filters.status === st
-                    ? 'bg-slate-700 text-white border border-slate-600'
-                    : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-slate-600 hover:bg-gray-200'
                 }`}
               >
                 {st}
@@ -387,9 +359,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onShowToast }) => 
             {activeFilterCount > 0 && (
               <button
                 onClick={resetFilters}
-                className="ml-2 text-xs text-rose-400 hover:underline font-semibold"
+                className="ml-2 text-xs text-red-600 hover:underline font-medium"
               >
-                Reset Filters ({activeFilterCount})
+                Reset ({activeFilterCount})
               </button>
             )}
           </div>

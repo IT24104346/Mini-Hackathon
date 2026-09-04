@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/db';
 import floodRoutes from './routes/floodRoutes';
 import authRoutes from './routes/authRoutes';
-import { seedDefaultUsers } from './controllers/authController';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -12,10 +11,8 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB & Seed default accounts
-connectDB().then(() => {
-  seedDefaultUsers();
-});
+// Connect to MongoDB
+connectDB();
 
 // Middleware
 app.use(cors({
