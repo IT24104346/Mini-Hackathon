@@ -10,10 +10,6 @@ import {
   createFloodReport
 } from '../services/api';
 import {
-  analyzeFloodDescriptionWithAI,
-  AIAssessmentResult
-} from '../services/aiAssistant';
-import {
   DISTRICT_NAMES,
   getDistrictCoordinates,
   detectDistrictFromLocation,
@@ -23,14 +19,11 @@ import {
 import {
   ShieldAlert,
   Send,
-  Sparkles,
   MapPin,
-  Compass,
   AlertTriangle,
   Info,
   Droplets,
   Users,
-  CheckCircle2,
   Loader2,
   Navigation,
   Check
@@ -69,16 +62,13 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
 
-  // AI Assistant State
-  const [aiResult, setAiResult] = useState<AIAssessmentResult | null>(null);
-  const [isAnalyzingAI, setIsAnalyzingAI] = useState(false);
+
 
   // Handle Location Typing & Automatic District Detection
   const handleLocationChange = (val: string) => {
     setFormData((prev) => ({ ...prev, location: val }));
 
     if (val.trim().length >= 2) {
-      // 1. Check for town/city detection
       const detection = detectDistrictFromLocation(val);
       if (detection.detectedDistrict) {
         setFormData((prev) => ({
@@ -96,7 +86,6 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
         setAutoDetectedMatch(null);
       }
 
-      // 2. Autocomplete suggestions
       const suggestions = getTownSuggestions(val, 4);
       setTownSuggestions(suggestions);
     } else {
@@ -149,38 +138,14 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
         }));
         onShowToast('success', 'Location Detected', `GPS set to ${latitude.toFixed(4)}° N, ${longitude.toFixed(4)}° E`);
       },
-      (error) => {
+      () => {
         onShowToast('info', 'GPS Access Denied', 'Using district center coordinates instead.');
       },
       { timeout: 8000 }
     );
   };
 
-  // AI Analysis Trigger
-  const handleRunAI = () => {
-    if (!formData.description || formData.description.trim().length < 8) {
-      onShowToast('warning', 'More Details Needed', 'Please type at least 8 characters in the description before running AI analysis.');
-      return;
-    }
 
-    setIsAnalyzingAI(true);
-    setTimeout(() => {
-      const assessment = analyzeFloodDescriptionWithAI(formData.description, formData.waterLevel);
-      setAiResult(assessment);
-      setIsAnalyzingAI(false);
-      onShowToast('info', 'AI Analysis Ready', `Suggested: ${assessment.suggestedSeverity} Risk • ${assessment.suggestedFloodType}`);
-    }, 400);
-  };
-
-  const applyAISuggestions = () => {
-    if (!aiResult) return;
-    setFormData((prev) => ({
-      ...prev,
-      severity: aiResult.suggestedSeverity,
-      floodType: aiResult.suggestedFloodType
-    }));
-    onShowToast('success', 'AI Recommendations Applied', 'Severity and Flood Type updated from AI assessment.');
-  };
 
   // Validation
   const validate = (): boolean => {
@@ -243,25 +208,25 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-6 space-y-8">
+    <div className="max-w-4xl mx-auto py-6 space-y-6">
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold mb-3">
-          <ShieldAlert className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
+          <ShieldAlert className="w-3.5 h-3.5 text-blue-600" />
           <span>Community Early Warning Dispatch</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
           Report a Flood Situation in Sri Lanka
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-2">
+        <p className="text-xs sm:text-sm text-slate-600 mt-1.5">
           Help emergency services, disaster volunteers, and neighboring residents know the live water levels, impassable roads, and urgent evacuation needs in your area.
         </p>
       </div>
 
       {/* Server Error Alert */}
       {serverError && (
-        <div className="p-4 rounded-2xl bg-rose-950/50 border border-rose-800 text-rose-300 text-xs flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-400" />
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-600" />
           <div>
             <div className="font-bold">Submission Error:</div>
             <div className="whitespace-pre-line mt-0.5">{serverError}</div>
@@ -270,18 +235,18 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
       )}
 
       {/* Main Form Container */}
-      <form onSubmit={handleSubmit} className="glass-panel rounded-3xl p-6 sm:p-10 border border-slate-800 space-y-8 shadow-2xl">
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 space-y-6 shadow-sm">
         {/* Section 1: Location Details */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-            <div className="flex items-center gap-2 text-sm font-bold text-cyan-400">
-              <MapPin className="w-4 h-4" />
+          <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
+              <MapPin className="w-4 h-4 text-blue-600" />
               <span>1. Location & Automatic District Identification</span>
             </div>
 
             {autoDetectedMatch && (
-              <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold animate-in fade-in">
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-800 text-[11px] font-bold">
+                <Check className="w-3 h-3 text-emerald-600" />
                 <span>Auto-detected: {autoDetectedMatch.district} District</span>
               </span>
             )}
@@ -290,39 +255,39 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Location input with automatic detection */}
             <div className="relative">
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5">
-                City / Town / Street / Village Name <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                City / Town / Street / Village Name <span className="text-red-600">*</span>
               </label>
               <input
                 type="text"
                 value={formData.location}
                 onChange={(e) => handleLocationChange(e.target.value)}
-                placeholder="Type city e.g. Wellampitiya, Biyagama, Kandy, Galle, Ratnapura..."
-                className={`w-full px-4 py-3 rounded-2xl bg-slate-950 border ${
-                  formErrors.location ? 'border-rose-500' : 'border-slate-700/80'
-                } text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500`}
+                placeholder="Type city e.g. Godagama, Wellampitiya, Biyagama, Kandy, Galle..."
+                className={`w-full px-3.5 py-2.5 rounded-xl bg-white border ${
+                  formErrors.location ? 'border-red-500' : 'border-gray-300'
+                } text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
               />
               {formErrors.location && (
-                <p className="text-[11px] text-rose-400 mt-1">{formErrors.location}</p>
+                <p className="text-[11px] text-red-600 mt-1">{formErrors.location}</p>
               )}
 
               {/* Autocomplete Quick Suggestions */}
               {townSuggestions.length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-1.5 z-30 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl p-2 space-y-1">
-                  <div className="text-[10px] text-slate-400 px-2 py-0.5 uppercase tracking-wider font-semibold">
-                    Matching Sri Lankan Locations (Click to Auto-fill):
+                <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 space-y-1">
+                  <div className="text-[10px] text-slate-500 px-2 py-0.5 uppercase tracking-wider font-semibold">
+                    Matching Locations (Click to Auto-fill):
                   </div>
                   {townSuggestions.map((item) => (
                     <button
                       type="button"
                       key={`${item.town}-${item.district}`}
                       onClick={() => handleSelectSuggestion(item)}
-                      className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs flex items-center justify-between transition group"
+                      className="w-full text-left px-3 py-1.5 rounded-lg hover:bg-blue-50 text-xs flex items-center justify-between transition"
                     >
-                      <span className="font-semibold text-slate-200 group-hover:text-cyan-300">
+                      <span className="font-semibold text-slate-800">
                         📍 {item.town}
                       </span>
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700">
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-gray-100 text-slate-700 border border-gray-200">
                         {item.district} District
                       </span>
                     </button>
@@ -333,16 +298,16 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
 
             {/* District dropdown (auto-selected or manual override) */}
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5 flex items-center justify-between">
-                <span>Sri Lankan District <span className="text-rose-400">*</span></span>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
+                <span>Sri Lankan District <span className="text-red-600">*</span></span>
                 {autoDetectedMatch && (
-                  <span className="text-[10px] text-cyan-400 font-normal">Auto-selected</span>
+                  <span className="text-[10px] text-blue-600 font-medium">Auto-selected</span>
                 )}
               </label>
               <select
                 value={formData.district}
                 onChange={(e) => handleDistrictChange(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 {DISTRICT_NAMES.map((d) => (
                   <option key={d} value={d}>
@@ -356,7 +321,7 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
           {/* Coordinates row */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
             <div>
-              <label className="block text-[11px] font-medium text-slate-400 mb-1">
+              <label className="block text-[11px] font-medium text-slate-600 mb-1">
                 Latitude (° N)
               </label>
               <input
@@ -364,12 +329,12 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
                 step="0.0001"
                 value={formData.latitude}
                 onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) || 0 })}
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-gray-300 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-medium text-slate-400 mb-1">
+              <label className="block text-[11px] font-medium text-slate-600 mb-1">
                 Longitude (° E)
               </label>
               <input
@@ -377,7 +342,7 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
                 step="0.0001"
                 value={formData.longitude}
                 onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) || 0 })}
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-gray-300 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
 
@@ -385,9 +350,9 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
               <button
                 type="button"
                 onClick={handleGetDeviceLocation}
-                className="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-semibold flex items-center justify-center gap-1.5 transition border border-slate-700"
+                className="w-full py-2 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition border border-gray-300"
               >
-                <Navigation className="w-3.5 h-3.5" />
+                <Navigation className="w-3.5 h-3.5 text-blue-600" />
                 <span>Auto-Detect GPS</span>
               </button>
             </div>
@@ -396,35 +361,35 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
 
         {/* Section 2: Severity & Category */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-sm font-bold text-cyan-400 border-b border-slate-800 pb-2">
-            <AlertTriangle className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-sm font-bold text-slate-900 border-b border-gray-200 pb-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
             <span>2. Severity & Flood Classification</span>
           </div>
 
           {/* Severity selector pills */}
           <div>
-            <label className="block text-xs font-semibold text-slate-200 mb-2">
-              Select Severity Level <span className="text-rose-400">*</span>
+            <label className="block text-xs font-semibold text-slate-700 mb-2">
+              Select Severity Level <span className="text-red-600">*</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {[
-                { value: 'Low', label: 'Low Risk', desc: 'Puddles / < 1 ft water', color: 'border-emerald-500/40 bg-emerald-950/20 text-emerald-400' },
-                { value: 'Moderate', label: 'Moderate', desc: '1-2 ft water / road block', color: 'border-yellow-500/40 bg-yellow-950/20 text-yellow-300' },
-                { value: 'High', label: 'High Risk', desc: '2-4 ft / homes inundated', color: 'border-amber-500/40 bg-amber-950/20 text-amber-400' },
-                { value: 'Critical', label: 'Critical', desc: '> 4 ft / Evacuation boat need', color: 'border-rose-500/40 bg-rose-950/20 text-rose-400' }
+                { value: 'Low', label: 'Low Risk', desc: 'Puddles / < 1 ft water', border: 'border-emerald-300 bg-emerald-50 text-emerald-800' },
+                { value: 'Moderate', label: 'Moderate', desc: '1-2 ft water / road block', border: 'border-yellow-300 bg-yellow-50 text-yellow-800' },
+                { value: 'High', label: 'High Risk', desc: '2-4 ft / homes inundated', border: 'border-amber-300 bg-amber-50 text-amber-800' },
+                { value: 'Critical', label: 'Critical', desc: '> 4 ft / Evacuation need', border: 'border-red-300 bg-red-50 text-red-800' }
               ].map((sev) => (
                 <button
                   type="button"
                   key={sev.value}
                   onClick={() => setFormData({ ...formData, severity: sev.value as SeverityType })}
-                  className={`p-3 rounded-2xl border text-left transition ${
+                  className={`p-3 rounded-xl border text-left transition ${
                     formData.severity === sev.value
-                      ? `${sev.color} ring-2 ring-cyan-400 font-bold`
-                      : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700'
+                      ? `${sev.border} ring-2 ring-blue-600 font-bold shadow-sm`
+                      : 'border-gray-200 bg-white text-slate-700 hover:border-gray-300'
                   }`}
                 >
-                  <div className="text-xs">{sev.label}</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">{sev.desc}</div>
+                  <div className="text-xs font-bold">{sev.label}</div>
+                  <div className="text-[10px] text-slate-500 mt-0.5">{sev.desc}</div>
                 </button>
               ))}
             </div>
@@ -433,13 +398,13 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
           {/* Flood Type & Water Level */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5">
-                Flood Type / Origin <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Flood Type / Origin <span className="text-red-600">*</span>
               </label>
               <select
                 value={formData.floodType}
                 onChange={(e) => setFormData({ ...formData, floodType: e.target.value as FloodType })}
-                className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="River Overflow">River Overflow (Kelani/Kalu/Gin/Nilwala)</option>
                 <option value="Flash Flood">Flash Flood (Sudden Torrential Runoff)</option>
@@ -451,9 +416,9 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5 flex justify-between">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
                 <span>Estimated Water Level</span>
-                <span className="text-cyan-400 font-bold">{formData.waterLevel} ft</span>
+                <span className="text-blue-700 font-bold">{formData.waterLevel} ft</span>
               </label>
               <div className="flex items-center gap-3">
                 <input
@@ -463,7 +428,7 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
                   step="0.5"
                   value={formData.waterLevel}
                   onChange={(e) => setFormData({ ...formData, waterLevel: parseFloat(e.target.value) })}
-                  className="flex-1 accent-cyan-500 cursor-pointer"
+                  className="flex-1 accent-blue-600 cursor-pointer"
                 />
                 <input
                   type="number"
@@ -472,97 +437,44 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
                   max="50"
                   value={formData.waterLevel}
                   onChange={(e) => setFormData({ ...formData, waterLevel: parseFloat(e.target.value) || 0 })}
-                  className="w-20 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-center text-slate-100"
+                  className="w-20 px-3 py-2 rounded-xl bg-white border border-gray-300 text-xs text-center text-slate-800 font-semibold"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Section 3: Description & Optional AI Assistant */}
+        {/* Section 3: Description */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-            <div className="flex items-center gap-2 text-sm font-bold text-cyan-400">
-              <Droplets className="w-4 h-4" />
+          <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
+              <Droplets className="w-4 h-4 text-blue-600" />
               <span>3. Situation Details & Observations</span>
             </div>
-            
-            {/* AI Assistant Button */}
-            <button
-              type="button"
-              onClick={handleRunAI}
-              disabled={isAnalyzingAI}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold shadow-sm transition"
-            >
-              {isAnalyzingAI ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Sparkles className="w-3.5 h-3.5" />
-              )}
-              <span>AI Severity Assessor</span>
-            </button>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-200 mb-1.5">
-              Situation Description <span className="text-rose-400">*</span>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              Situation Description <span className="text-red-600">*</span>
             </label>
             <textarea
               rows={4}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Describe road accessibility, rising river levels, trapped families, power outages, evacuation boat requirements..."
-              className={`w-full p-4 rounded-2xl bg-slate-950 border ${
-                formErrors.description ? 'border-rose-500' : 'border-slate-700/80'
-              } text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 leading-relaxed`}
+              className={`w-full p-3.5 rounded-xl bg-white border ${
+                formErrors.description ? 'border-red-500' : 'border-gray-300'
+              } text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 leading-relaxed`}
             />
             {formErrors.description && (
-              <p className="text-[11px] text-rose-400 mt-1">{formErrors.description}</p>
+              <p className="text-[11px] text-red-600 mt-1">{formErrors.description}</p>
             )}
           </div>
-
-          {/* AI Assessment Card (if evaluated) */}
-          {aiResult && (
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-slate-900 to-cyan-950/40 border border-cyan-800/60 animate-in fade-in duration-300">
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-cyan-400" />
-                    <h4 className="text-xs font-bold text-white">
-                      AI Assessment: {aiResult.urgencyLevel}
-                    </h4>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">
-                      Confidence: {aiResult.confidenceScore}%
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    {aiResult.reasoning}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] text-slate-400">
-                    <span>Suggested Severity: <strong className="text-cyan-300">{aiResult.suggestedSeverity}</strong></span>
-                    <span>•</span>
-                    <span>Suggested Type: <strong className="text-cyan-300">{aiResult.suggestedFloodType}</strong></span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={applyAISuggestions}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-sm transition"
-                >
-                  Apply to Form
-                </button>
-              </div>
-              <p className="text-[10px] text-slate-500 mt-2 italic">
-                * Note: AI suggestions are assistive guidelines and do not replace official emergency protocols.
-              </p>
-            </div>
-          )}
 
           {/* Affected count & Status */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Estimated Affected People / Families
               </label>
               <input
@@ -570,19 +482,19 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
                 min="0"
                 value={formData.affectedPeople}
                 onChange={(e) => setFormData({ ...formData, affectedPeople: parseInt(e.target.value, 10) || 0 })}
-                className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g. 50"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Initial Alert Status
               </label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as StatusType })}
-                className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="Active">🔴 Active Emergency</option>
                 <option value="Monitoring">🟡 Monitoring Situation</option>
@@ -594,14 +506,14 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
 
         {/* Section 4: Optional Reporter Details */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-sm font-bold text-cyan-400 border-b border-slate-800 pb-2">
-            <Users className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-sm font-bold text-slate-900 border-b border-gray-200 pb-2">
+            <Users className="w-4 h-4 text-blue-600" />
             <span>4. Reporter Contact (Optional)</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Reporter Name / Community Org
               </label>
               <input
@@ -609,12 +521,12 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
                 value={formData.reporterName}
                 onChange={(e) => setFormData({ ...formData, reporterName: e.target.value })}
                 placeholder="e.g. Sunil Perera (Grama Niladhari division)"
-                className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Contact Number (Optional)
               </label>
               <input
@@ -622,23 +534,23 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
                 value={formData.contactNumber}
                 onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
                 placeholder="e.g. +94 77 123 4567"
-                className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700/80 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
         </div>
 
         {/* Submit Action */}
-        <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-            <Info className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+        <div className="pt-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
+            <Info className="w-4 h-4 text-blue-600 flex-shrink-0" />
             <span>By submitting, you confirm this information is accurate to the best of your knowledge.</span>
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 transition disabled:opacity-50"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition disabled:opacity-50"
           >
             {isSubmitting ? (
               <>
