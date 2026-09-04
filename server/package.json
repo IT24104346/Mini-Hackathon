@@ -1,0 +1,33 @@
+{
+  "name": "floodwatch-lk-server",
+  "version": "1.0.0",
+  "description": "Backend API for Flood-Safe-LK - Sri Lanka Community Flood Alert & Management System",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+  },
+  "keywords": [
+    "flood-management",
+    "sri-lanka",
+    "disaster-management",
+    "express",
+    "mongodb"
+  ],
+  "author": "SE3090 Mini Hackathon Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.17.16",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  }
+}
