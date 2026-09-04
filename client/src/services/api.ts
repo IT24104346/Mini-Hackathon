@@ -7,7 +7,15 @@ import {
   FilterOptions
 } from '../types/flood';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const getApiBase = () => {
+  let url = (import.meta.env.VITE_API_BASE_URL || '/api').trim();
+  if (url.endsWith('/')) {
+    url = url.slice(0, -1);
+  }
+  return url;
+};
+
+const API_BASE = getApiBase();
 
 export const fetchFloodReports = async (filters?: Partial<FilterOptions>): Promise<FloodReport[]> => {
   const params = new URLSearchParams();

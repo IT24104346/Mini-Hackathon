@@ -1,7 +1,15 @@
+import dns from 'dns';
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db';
+
+// Ensure DNS resolves SRV records across all network environments
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {
+  // Ignore
+}
 import floodRoutes from './routes/floodRoutes';
 import authRoutes from './routes/authRoutes';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler';
@@ -24,8 +32,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint
-app.get('/api/health', (req: Request, res: Response) => {
+// Health check endpoints
+app.get(['/api/health', '/health', '/'], (req: Request, res: Response) => {
   res.status(200).json({
     status: 'online',
     system: 'Flood-Safe-LK Community Disaster Management API',
@@ -34,9 +42,9 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/floods', floodRoutes);
+// API Routes (supports both /api/* and root paths)
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/floods', '/floods'], floodRoutes);
 
 // Error Handling
 app.use(notFoundHandler);

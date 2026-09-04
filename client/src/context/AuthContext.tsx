@@ -13,7 +13,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const getApiBase = () => {
+  let url = (import.meta.env.VITE_API_BASE_URL || '/api').trim();
+  if (url.endsWith('/')) {
+    url = url.slice(0, -1);
+  }
+  return url;
+};
+
+const API_BASE = getApiBase();
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(() => {
