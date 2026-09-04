@@ -8,7 +8,6 @@ import { DashboardPage } from './pages/DashboardPage';
 import { ReportPage } from './pages/ReportPage';
 import { MapPage } from './pages/MapPage';
 import { AboutPage } from './pages/AboutPage';
-import { AuthGatewayPage } from './pages/AuthGatewayPage';
 import { ToastContainer, ToastMessage, ToastType } from './components/Toast';
 
 export const AppContent: React.FC = () => {
@@ -29,17 +28,7 @@ export const AppContent: React.FC = () => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // If user is not authenticated, show ONLY the clean login & registration gateway (no data UI or navbar)
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-50 text-slate-900">
-        <AuthGatewayPage onShowToast={addToast} />
-        <ToastContainer toasts={toasts} onDismiss={removeToast} />
-      </div>
-    );
-  }
-
-  // Once authenticated, unlock full Flood-Safe-LK Portal with Home Page, Navbar, Map, and Data UI
+  // Directly render full Flood-Safe-LK Portal UI with Home, Dashboard, Map, and Reporting
   return (
     <BrowserRouter>
       <div className="flex flex-col min-h-screen bg-gray-50 text-slate-900">
