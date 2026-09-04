@@ -40,24 +40,24 @@ const ToastItem: React.FC<{ toast: ToastMessage; onDismiss: (id: string) => void
     switch (toast.type) {
       case 'success':
         return {
-          bg: 'bg-slate-900 border-emerald-500/40 text-emerald-400',
-          icon: <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+          bg: 'bg-white border-emerald-200 text-emerald-800 shadow-lg',
+          icon: <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
         };
       case 'error':
         return {
-          bg: 'bg-slate-900 border-rose-500/40 text-rose-400',
-          icon: <XCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
+          bg: 'bg-white border-red-200 text-red-800 shadow-lg',
+          icon: <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
         };
       case 'warning':
         return {
-          bg: 'bg-slate-900 border-amber-500/40 text-amber-400',
-          icon: <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0" />
+          bg: 'bg-white border-amber-200 text-amber-800 shadow-lg',
+          icon: <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
         };
       case 'info':
       default:
         return {
-          bg: 'bg-slate-900 border-cyan-500/40 text-cyan-400',
-          icon: <Info className="w-5 h-5 text-cyan-400 flex-shrink-0" />
+          bg: 'bg-white border-blue-200 text-blue-800 shadow-lg',
+          icon: <Info className="w-5 h-5 text-blue-600 flex-shrink-0" />
         };
     }
   };
@@ -66,18 +66,18 @@ const ToastItem: React.FC<{ toast: ToastMessage; onDismiss: (id: string) => void
 
   return (
     <div
-      className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl border shadow-xl backdrop-blur-md transition-all duration-300 transform translate-y-0 ${style.bg}`}
+      className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl border transition-all duration-300 transform translate-y-0 ${style.bg}`}
     >
       {style.icon}
       <div className="flex-1 min-w-0">
-        <h4 className="font-semibold text-sm text-slate-100">{toast.title}</h4>
+        <h4 className="font-semibold text-sm text-slate-900">{toast.title}</h4>
         {toast.message && (
-          <p className="text-xs text-slate-300 mt-0.5 break-words">{toast.message}</p>
+          <p className="text-xs text-slate-600 mt-0.5 break-words">{toast.message}</p>
         )}
       </div>
       <button
         onClick={() => onDismiss(toast.id)}
-        className="text-slate-400 hover:text-slate-200 p-1 rounded-lg hover:bg-slate-800 transition"
+        className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-gray-100 transition"
       >
         <X className="w-4 h-4" />
       </button>
