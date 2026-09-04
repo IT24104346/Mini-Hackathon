@@ -76,3 +76,20 @@ export interface FilterOptions {
   sortBy: string;
   order: 'asc' | 'desc';
 }
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: 'user' | 'admin';
+  district?: string;
+  phone?: string;
+  organization?: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  token: string;
+  user: UserProfile;
+}

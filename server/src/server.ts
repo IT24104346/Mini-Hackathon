@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db';
 import floodRoutes from './routes/floodRoutes';
+import authRoutes from './routes/authRoutes';
+import { seedDefaultUsers } from './controllers/authController';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -10,12 +12,14 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB & Seed default accounts
+connectDB().then(() => {
+  seedDefaultUsers();
+});
 
 // Middleware
 app.use(cors({
-  origin: '*', // Allow connections from frontend deployment/localhost
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -34,6 +38,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 });
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/floods', floodRoutes);
 
 // Error Handling
@@ -44,6 +49,7 @@ app.listen(PORT, () => {
   console.log(`\n======================================================`);
   console.log(`🚀 Flood-Safe-LK Server is running on port ${PORT}`);
   console.log(`📡 Health Check: http://localhost:${PORT}/api/health`);
+  console.log(`🔐 Auth API:    http://localhost:${PORT}/api/auth/login`);
   console.log(`🌊 Floods API:  http://localhost:${PORT}/api/floods`);
   console.log(`======================================================\n`);
 });
