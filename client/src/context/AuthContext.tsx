@@ -36,36 +36,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user, token]);
 
   const login = async (email: string, password: string): Promise<UserProfile> => {
-    const res = await fetch(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    const data: AuthResponse = await res.json();
-    if (!res.ok || !data.success) {
-      throw new Error(data.message || 'Login failed.');
+      const data: Partial<AuthResponse> = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || `Login failed (Status: ${res.status}). Ensure backend server is running.`);
+      }
+
+      if (!data.user || !data.token) {
+        throw new Error('Invalid response structure from authentication server.');
+      }
+
+      setUser(data.user);
+      setToken(data.token);
+      return data.user;
+    } catch (err: any) {
+      if (err.name === 'TypeError' && err.message.toLowerCase().includes('fetch')) {
+        throw new Error('Unable to connect to the backend server. Please verify your internet connection or backend server status.');
+      }
+      throw err;
     }
-
-    setUser(data.user);
-    setToken(data.token);
-    return data.user;
   };
 
   const register = async (userData: any): Promise<UserProfile> => {
-    const res = await fetch(`${API_BASE}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData)
-    });
+    try {
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      });
 
-    const data: AuthResponse = await res.json();
-    if (!res.ok || !data.success) {
-      throw new Error(data.message || 'Registration failed.');
+      const data: Partial<AuthResponse> = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || `Registration failed (Status: ${res.status}). Ensure backend server is running.`);
+      }
+
+      if (!data.user) {
+        throw new Error('Invalid response structure from authentication server.');
+      }
+
+      return data.user;
+    } catch (err: any) {
+      if (err.name === 'TypeError' && err.message.toLowerCase().includes('fetch')) {
+        throw new Error('Unable to connect to the backend server. Please verify your internet connection or backend server status.');
+      }
+      throw err;
     }
-
-    // Do not automatically set user/token so user is redirected to sign in on login page
-    return data.user;
   };
 
   const logout = () => {

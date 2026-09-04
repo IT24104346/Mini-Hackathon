@@ -79,13 +79,13 @@ export const createFloodReport = async (data: CreateFloodInput): Promise<FloodRe
     body: JSON.stringify(data)
   });
 
-  const result = await response.json();
+  const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
     if (result.errors && Array.isArray(result.errors)) {
       throw new Error(result.errors.join('\n'));
     }
-    throw new Error(result.message || 'Failed to submit flood report');
+    throw new Error(result.message || `Failed to submit flood report (Status: ${response.status})`);
   }
 
   return result.data;
@@ -100,13 +100,13 @@ export const updateFloodReport = async (id: string, data: UpdateFloodInput): Pro
     body: JSON.stringify(data)
   });
 
-  const result = await response.json();
+  const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
     if (result.errors && Array.isArray(result.errors)) {
       throw new Error(result.errors.join('\n'));
     }
-    throw new Error(result.message || 'Failed to update flood report');
+    throw new Error(result.message || `Failed to update flood report (Status: ${response.status})`);
   }
 
   return result.data;
