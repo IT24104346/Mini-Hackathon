@@ -16,7 +16,9 @@ import {
 import {
   DISTRICT_NAMES,
   getDistrictCoordinates,
-  SRI_LANKA_DISTRICTS_DATA
+  detectDistrictFromLocation,
+  getTownSuggestions,
+  TownLocation
 } from '../utils/districts';
 import {
   ShieldAlert,
@@ -30,7 +32,8 @@ import {
   Users,
   CheckCircle2,
   Loader2,
-  Navigation
+  Navigation,
+  Check
 } from 'lucide-react';
 
 interface ReportPageProps {
@@ -55,6 +58,13 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
     contactNumber: ''
   });
 
+  const [autoDetectedMatch, setAutoDetectedMatch] = useState<{
+    district: string;
+    matchedTown: string;
+  } | null>(null);
+
+  const [townSuggestions, setTownSuggestions] = useState<TownLocation[]>([]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -63,7 +73,55 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
   const [aiResult, setAiResult] = useState<AIAssessmentResult | null>(null);
   const [isAnalyzingAI, setIsAnalyzingAI] = useState(false);
 
-  // Handle District Change
+  // Handle Location Typing & Automatic District Detection
+  const handleLocationChange = (val: string) => {
+    setFormData((prev) => ({ ...prev, location: val }));
+
+    if (val.trim().length >= 2) {
+      // 1. Check for town/city detection
+      const detection = detectDistrictFromLocation(val);
+      if (detection.detectedDistrict) {
+        setFormData((prev) => ({
+          ...prev,
+          location: val,
+          district: detection.detectedDistrict!,
+          latitude: detection.lat ?? prev.latitude,
+          longitude: detection.lng ?? prev.longitude
+        }));
+        setAutoDetectedMatch({
+          district: detection.detectedDistrict,
+          matchedTown: detection.matchedTown || val
+        });
+      } else {
+        setAutoDetectedMatch(null);
+      }
+
+      // 2. Autocomplete suggestions
+      const suggestions = getTownSuggestions(val, 4);
+      setTownSuggestions(suggestions);
+    } else {
+      setAutoDetectedMatch(null);
+      setTownSuggestions([]);
+    }
+  };
+
+  // Select Autocomplete Suggestion
+  const handleSelectSuggestion = (item: TownLocation) => {
+    setFormData((prev) => ({
+      ...prev,
+      location: item.town,
+      district: item.district,
+      latitude: item.lat,
+      longitude: item.lng
+    }));
+    setAutoDetectedMatch({
+      district: item.district,
+      matchedTown: item.town
+    });
+    setTownSuggestions([]);
+  };
+
+  // Handle Manual District Change
   const handleDistrictChange = (districtName: string) => {
     const coords = getDistrictCoordinates(districtName);
     setFormData((prev) => ({
@@ -215,22 +273,31 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
       <form onSubmit={handleSubmit} className="glass-panel rounded-3xl p-6 sm:p-10 border border-slate-800 space-y-8 shadow-2xl">
         {/* Section 1: Location Details */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-sm font-bold text-cyan-400 border-b border-slate-800 pb-2">
-            <MapPin className="w-4 h-4" />
-            <span>1. Location & District Identification</span>
+          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div className="flex items-center gap-2 text-sm font-bold text-cyan-400">
+              <MapPin className="w-4 h-4" />
+              <span>1. Location & Automatic District Identification</span>
+            </div>
+
+            {autoDetectedMatch && (
+              <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold animate-in fade-in">
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Auto-detected: {autoDetectedMatch.district} District</span>
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Location input */}
-            <div>
+            {/* Location input with automatic detection */}
+            <div className="relative">
               <label className="block text-xs font-semibold text-slate-200 mb-1.5">
-                Location / Street / Village Name <span className="text-rose-400">*</span>
+                City / Town / Street / Village Name <span className="text-rose-400">*</span>
               </label>
               <input
                 type="text"
                 value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder="e.g. Wellampitiya Lowlands, Kotikawatta"
+                onChange={(e) => handleLocationChange(e.target.value)}
+                placeholder="Type city e.g. Wellampitiya, Biyagama, Kandy, Galle, Ratnapura..."
                 className={`w-full px-4 py-3 rounded-2xl bg-slate-950 border ${
                   formErrors.location ? 'border-rose-500' : 'border-slate-700/80'
                 } text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500`}
@@ -238,12 +305,39 @@ export const ReportPage: React.FC<ReportPageProps> = ({ onShowToast }) => {
               {formErrors.location && (
                 <p className="text-[11px] text-rose-400 mt-1">{formErrors.location}</p>
               )}
+
+              {/* Autocomplete Quick Suggestions */}
+              {townSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-1.5 z-30 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl p-2 space-y-1">
+                  <div className="text-[10px] text-slate-400 px-2 py-0.5 uppercase tracking-wider font-semibold">
+                    Matching Sri Lankan Locations (Click to Auto-fill):
+                  </div>
+                  {townSuggestions.map((item) => (
+                    <button
+                      type="button"
+                      key={`${item.town}-${item.district}`}
+                      onClick={() => handleSelectSuggestion(item)}
+                      className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-800 text-xs flex items-center justify-between transition group"
+                    >
+                      <span className="font-semibold text-slate-200 group-hover:text-cyan-300">
+                        📍 {item.town}
+                      </span>
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700">
+                        {item.district} District
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* District dropdown */}
+            {/* District dropdown (auto-selected or manual override) */}
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1.5">
-                Sri Lankan District <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold text-slate-200 mb-1.5 flex items-center justify-between">
+                <span>Sri Lankan District <span className="text-rose-400">*</span></span>
+                {autoDetectedMatch && (
+                  <span className="text-[10px] text-cyan-400 font-normal">Auto-selected</span>
+                )}
               </label>
               <select
                 value={formData.district}

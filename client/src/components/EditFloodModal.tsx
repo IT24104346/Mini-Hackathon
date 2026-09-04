@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FloodReport, UpdateFloodInput, SeverityType, StatusType, FloodType } from '../types/flood';
-import { DISTRICT_NAMES } from '../utils/districts';
-import { X, Save, AlertCircle, Loader2 } from 'lucide-react';
+import { DISTRICT_NAMES, detectDistrictFromLocation, getTownSuggestions, TownLocation } from '../utils/districts';
+import { X, Save, AlertCircle, Loader2, Check } from 'lucide-react';
 
 interface EditFloodModalProps {
   report: FloodReport | null;
@@ -27,6 +27,12 @@ export const EditFloodModal: React.FC<EditFloodModalProps> = ({
     status: 'Active'
   });
 
+  const [autoDetectedMatch, setAutoDetectedMatch] = useState<{
+    district: string;
+    matchedTown: string;
+  } | null>(null);
+
+  const [townSuggestions, setTownSuggestions] = useState<TownLocation[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -46,17 +52,62 @@ export const EditFloodModal: React.FC<EditFloodModalProps> = ({
         reporterName: report.reporterName || '',
         contactNumber: report.contactNumber || ''
       });
+      setAutoDetectedMatch(null);
+      setTownSuggestions([]);
       setErrorMessage(null);
     }
   }, [report]);
 
   if (!isOpen || !report) return null;
 
+  const handleLocationChange = (val: string) => {
+    setFormData((prev) => ({ ...prev, location: val }));
+
+    if (val.trim().length >= 2) {
+      const detection = detectDistrictFromLocation(val);
+      if (detection.detectedDistrict) {
+        setFormData((prev) => ({
+          ...prev,
+          location: val,
+          district: detection.detectedDistrict!,
+          latitude: detection.lat ?? prev.latitude,
+          longitude: detection.lng ?? prev.longitude
+        }));
+        setAutoDetectedMatch({
+          district: detection.detectedDistrict,
+          matchedTown: detection.matchedTown || val
+        });
+      } else {
+        setAutoDetectedMatch(null);
+      }
+
+      const suggestions = getTownSuggestions(val, 3);
+      setTownSuggestions(suggestions);
+    } else {
+      setAutoDetectedMatch(null);
+      setTownSuggestions([]);
+    }
+  };
+
+  const handleSelectSuggestion = (item: TownLocation) => {
+    setFormData((prev) => ({
+      ...prev,
+      location: item.town,
+      district: item.district,
+      latitude: item.lat,
+      longitude: item.lng
+    }));
+    setAutoDetectedMatch({
+      district: item.district,
+      matchedTown: item.town
+    });
+    setTownSuggestions([]);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
-    // Basic frontend validation
     if (!formData.location || formData.location.trim().length < 2) {
       setErrorMessage('Please enter a location name (at least 2 characters).');
       return;
@@ -144,20 +195,42 @@ export const EditFloodModal: React.FC<EditFloodModalProps> = ({
             </div>
           </div>
 
-          {/* Location & District */}
+          {/* Location & District with Auto Detection */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
+            <div className="relative">
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Location Name / Town <span className="text-rose-400">*</span>
               </label>
               <input
                 type="text"
                 value={formData.location || ''}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                onChange={(e) => handleLocationChange(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 text-xs focus:ring-2 focus:ring-cyan-500 focus:outline-none"
-                placeholder="e.g. Wellampitiya Bridge, Biyagama Road"
+                placeholder="e.g. Wellampitiya, Biyagama, Galle..."
                 required
               />
+              {autoDetectedMatch && (
+                <p className="text-[10px] text-emerald-400 mt-1 flex items-center gap-1">
+                  <Check className="w-3 h-3" />
+                  <span>Detected: {autoDetectedMatch.district} District</span>
+                </p>
+              )}
+
+              {townSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-slate-900 border border-slate-700 rounded-xl shadow-xl p-1.5 space-y-1">
+                  {townSuggestions.map((item) => (
+                    <button
+                      type="button"
+                      key={`${item.town}-${item.district}`}
+                      onClick={() => handleSelectSuggestion(item)}
+                      className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-xs flex items-center justify-between"
+                    >
+                      <span className="text-slate-200">📍 {item.town}</span>
+                      <span className="text-[10px] text-cyan-400 font-semibold">{item.district}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div>
